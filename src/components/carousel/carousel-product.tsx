@@ -11,11 +11,11 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { Banners } from "@/models/banner.model";
-import { BannerCard } from "../banner/banner-card";
+import { Products } from "@/models/product.model";
+import ProductCard from "../product/product-card";
 import { CarouselDots } from "./carousel-dot";
 
-export function CarouselBanner({ data }: Banners) {
+export function CarouselProduct({ data }: Products) {
   /*renderiza 3 veces*/
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -33,7 +33,7 @@ export function CarouselBanner({ data }: Banners) {
   }, [api]);
 
   const plugin = React.useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false })
+    Autoplay({ delay: 3000, stopOnInteraction: true })
   ).current;
 
   const handleDotClick = (index: number) => {
@@ -44,34 +44,33 @@ export function CarouselBanner({ data }: Banners) {
   };
 
   return (
-    <Carousel
-      setApi={setApi}
-      plugins={[plugin]}
-      onMouseEnter={plugin.stop}
-      onMouseLeave={plugin.reset}
-      className="mx-auto w-full max-w-screen-2xl"
-    >
-      <CarouselContent>
-        {data.map((banner) => {
-          const { url, provider_metadata } = banner.image[0];
-          const { title, documentId } = banner;
-          const isVideo = provider_metadata.resource_type === "video";
-
-          return (
-            <CarouselItem key={documentId}>
-              <BannerCard url={url} title={title} isVideo={isVideo} />
-            </CarouselItem>
-          );
-        })}
-      </CarouselContent>
-      <CarouselPrevious className="left-2" />
-      <CarouselNext className="right-2" />
+    <div className="mx-auto w-full max-w-screen-2xl">
+      <Carousel
+        setApi={setApi}
+        plugins={[plugin]}
+        onMouseEnter={plugin.stop}
+        onMouseLeave={plugin.reset}
+      >
+        <CarouselContent>
+          {data.map((product) => {
+            return (
+              <CarouselItem
+                key={product.documentId}
+                className=" md:basis-1/2 lg:basis-1/3"
+              >
+                <ProductCard product={product} />
+              </CarouselItem>
+            );
+          })}
+        </CarouselContent>
+        <CarouselPrevious className="left-2" />
+        <CarouselNext className="right-2" />
+      </Carousel>
       <CarouselDots
         count={count}
         current={current}
         onDotClick={handleDotClick}
-        isCount
       />
-    </Carousel>
+    </div>
   );
 }
