@@ -1,3 +1,4 @@
+import { CarouselBanner } from "@/components/carousel/carousel-banner";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NavMenu } from "@/components/nav-bar/nav-menu";
 
@@ -10,7 +11,9 @@ export default function Home() {
           <ModeToggle />
         </nav>
       </header>
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start"></main>
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <CarouselBanner />
+      </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>
     </div>
   );
