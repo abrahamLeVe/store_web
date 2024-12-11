@@ -29,7 +29,7 @@ export function CarouselBanner({ data }: Banners) {
           <CarouselItem key={banner.documentId}>
             <div className="p-1">
               <Card>
-                <CardContent className="w-full h-full xl:aspect-video p-6 max-h-[550px]">
+                <CardContent className="w-full h-full p-6">
                   {banner.image[0].provider_metadata.resource_type ===
                   "video" ? (
                     <video
@@ -37,13 +37,13 @@ export function CarouselBanner({ data }: Banners) {
                       autoPlay
                       loop
                       muted
-                      className="w-full object-cover"
+                      className="w-full object-cover aspect-[16/5]"
                     />
                   ) : (
                     <img
                       src={banner.image[0].url}
                       alt={banner.title}
-                      className="w-full object-cover"
+                      className="w-full object-cover aspect-[16/5]"
                     />
                   )}
                 </CardContent>
