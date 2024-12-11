@@ -27,28 +27,27 @@ export function CarouselBanner({ data }: Banners) {
       <CarouselContent>
         {data.map((banner) => (
           <CarouselItem key={banner.documentId}>
-            <div className="p-1">
-              <Card>
-                <CardContent className="w-full h-full p-6">
-                  {banner.image[0].provider_metadata.resource_type ===
-                  "video" ? (
-                    <video
-                      src={banner.image[0].url}
-                      autoPlay
-                      loop
-                      muted
-                      className="w-full object-cover aspect-[16/5]"
-                    />
-                  ) : (
-                    <img
-                      src={banner.image[0].url}
-                      alt={banner.title}
-                      className="w-full object-cover aspect-[16/5]"
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardContent className="w-full h-full p-0 lg:p-6">
+                {banner.image[0].provider_metadata.resource_type === "video" ? (
+                  <video
+                    src={banner.image[0].url}
+                    autoPlay
+                    loop
+                    muted
+                    controls
+                    className="w-full object-cover aspect-[16/5]"
+                  />
+                ) : (
+                  <img
+                    src={banner.image[0].url}
+                    alt={banner.title}
+                    className="w-full object-cover aspect-[16/5]"
+                    loading="lazy"
+                  />
+                )}
+              </CardContent>
+            </Card>
           </CarouselItem>
         ))}
       </CarouselContent>
