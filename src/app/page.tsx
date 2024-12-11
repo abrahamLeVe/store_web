@@ -10,7 +10,7 @@ export default async function Home() {
   const { data: products } = await getProducts();
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen font-[family-name:var(--font-geist-sans)]">
+    <div className="flex flex-col items-center justify-start min-h-screen font-[family-name:var(--font-nunito-sans)]">
       <header className="w-full">
         <nav className="flex flex-row items-center justify-center h-20 max-w-screen-2xl m-auto gap-1">
           <NavMenu />
