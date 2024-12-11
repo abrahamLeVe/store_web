@@ -19,6 +19,7 @@ export default async function Home() {
       </header>
       <main className="flex flex-col gap-8 items-center">
         <CarouselBanner data={banners} />
+        <h2 className="font-semibold text-xl">Recien llegados</h2>
         <CarouselProduct data={products} />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>

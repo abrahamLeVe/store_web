@@ -4,6 +4,7 @@ import { Product } from "@/models/product.model";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import ProductCardDetail from "./product-card-detail";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
@@ -13,7 +14,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <ImageGalleryIndex product={product} />
         </CardContent>
         <CardFooter className="pt-2">
-          {/* <ProductDetail product={product} /> */}
+          <ProductCardDetail product={product} />
         </CardFooter>
       </Card>
     </div>
