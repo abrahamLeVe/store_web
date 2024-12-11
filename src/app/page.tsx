@@ -1,8 +1,10 @@
 import { CarouselBanner } from "@/components/carousel/carousel-banner";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NavMenu } from "@/components/nav-bar/nav-menu";
+import { getBanners } from "@/services/banner.service";
 
-export default function Home() {
+export default async function Home() {
+  const { data: banners } = await getBanners();
   return (
     <div className="flex flex-col items-center justify-start min-h-screen font-[family-name:var(--font-geist-sans)]">
       <header className="w-full bg-red-500">
@@ -12,7 +14,7 @@ export default function Home() {
         </nav>
       </header>
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <CarouselBanner />
+        <CarouselBanner data={banners} />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>
     </div>

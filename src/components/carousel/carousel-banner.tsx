@@ -1,6 +1,6 @@
 "use client";
-import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
+import * as React from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -10,8 +10,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Banners } from "@/models/banner.model";
 
-export function CarouselBanner() {
+export function CarouselBanner({ data }: Banners) {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
@@ -24,20 +25,35 @@ export function CarouselBanner() {
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index}>
+        {data.map((banner) => (
+          <CarouselItem key={banner.documentId}>
             <div className="p-1">
               <Card>
-                <CardContent className="flex aspect-video items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
+                <CardContent className="w-full h-full xl:aspect-video p-6 max-h-[550px]">
+                  {banner.image[0].provider_metadata.resource_type ===
+                  "video" ? (
+                    <video
+                      src={banner.image[0].url}
+                      autoPlay
+                      loop
+                      muted
+                      className="w-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={banner.image[0].url}
+                      alt={banner.title}
+                      className="w-full object-cover"
+                    />
+                  )}
                 </CardContent>
               </Card>
             </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="left-2" />
+      <CarouselNext className="right-2" />
     </Carousel>
   );
 }
