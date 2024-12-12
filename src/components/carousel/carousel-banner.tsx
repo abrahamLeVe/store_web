@@ -14,7 +14,7 @@ import { Banners } from "@/models/banner.model";
 
 export function CarouselBanner({ data }: Banners) {
   const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 4000, stopOnInteraction: true })
   );
 
   return (
@@ -30,10 +30,9 @@ export function CarouselBanner({ data }: Banners) {
             <div className="lg:p-1">
               <Card className="overflow-hidden">
                 <CardContent className="w-full h-full p-0 lg:p-6 ">
-                  {banner.image[0].provider_metadata.resource_type ===
-                  "video" ? (
+                  {banner.image.provider_metadata.resource_type === "video" ? (
                     <video
-                      src={banner.image[0].url}
+                      src={banner.image.url}
                       autoPlay
                       loop
                       muted
@@ -42,7 +41,7 @@ export function CarouselBanner({ data }: Banners) {
                     />
                   ) : (
                     <img
-                      src={banner.image[0].url}
+                      src={banner.image.url}
                       alt={banner.title}
                       className="w-full object-cover aspect-[16/5]"
                       loading="lazy"

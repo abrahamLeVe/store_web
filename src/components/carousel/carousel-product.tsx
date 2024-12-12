@@ -26,13 +26,12 @@ export function CarouselProduct({ data }: Products) {
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
       >
-        {" "}
         <CarouselContent>
           {data.map((product) => {
             return (
               <CarouselItem
                 key={product.documentId}
-                className=" md:basis-1/2 lg:basis-1/3"
+                className="xs:basis-1/2 md:basis-1/3 lg:basis-1/4"
               >
                 <ProductCard product={product} />
               </CarouselItem>

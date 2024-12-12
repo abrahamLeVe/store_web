@@ -1,16 +1,18 @@
-export interface Banners {
-  data: Datum[];
-  meta: Meta;
+export interface Categories {
+  data: Category[];
+  meta?: Meta;
 }
 
-export interface Datum {
+export interface Category {
   id: number;
   documentId: string;
   title: string;
+  description: null | string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date;
-  image: Image;
+  image?: Image;
+  sub_categories?: Category[];
 }
 
 export interface Image {
@@ -23,35 +25,28 @@ export interface Image {
   height: number | null;
   formats: Formats | null;
   hash: string;
-  ext: EXT;
-  mime: MIME;
+  ext: string;
+  mime: string;
   size: number;
   url: string;
   previewUrl: null | string;
-  provider: Provider;
+  provider: string;
   provider_metadata: ProviderMetadata;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date;
 }
 
-export enum EXT {
-  Mp4 = ".mp4",
-  Webp = ".webp",
-}
-
 export interface Formats {
-  large: Large;
-  small: Large;
-  medium: Large;
-  thumbnail: Large;
+  small: Small;
+  thumbnail: Small;
 }
 
-export interface Large {
-  ext: EXT;
+export interface Small {
+  ext: string;
   url: string;
   hash: string;
-  mime: MIME;
+  mime: string;
   name: string;
   path: null;
   size: number;
@@ -61,23 +56,9 @@ export interface Large {
   provider_metadata: ProviderMetadata;
 }
 
-export enum MIME {
-  ImageWebp = "image/webp",
-  VideoMp4 = "video/mp4",
-}
-
 export interface ProviderMetadata {
   public_id: string;
-  resource_type: ResourceType;
-}
-
-export enum ResourceType {
-  Image = "image",
-  Video = "video",
-}
-
-export enum Provider {
-  Cloudinary = "cloudinary",
+  resource_type: string;
 }
 
 export interface Meta {
