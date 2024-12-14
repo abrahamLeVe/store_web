@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { LogIn } from "lucide-react";
 
 const components: { title: string; href: string; description: string }[] = [

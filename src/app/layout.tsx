@@ -1,4 +1,5 @@
 import { ThemeProvider } from "@/components/theme-provider";
+import Providers from "@/providers/provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Nunito, Nunito_Sans } from "next/font/google";
@@ -33,7 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Providers>{children}</Providers>
         </ThemeProvider>
       </body>
     </html>

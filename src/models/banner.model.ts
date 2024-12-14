@@ -1,6 +1,6 @@
 export interface Banners {
   data: Datum[];
-  meta: Meta;
+  meta?: Meta;
 }
 
 export interface Datum {

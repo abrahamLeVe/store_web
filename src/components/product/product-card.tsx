@@ -8,16 +8,14 @@ import ProductCardDetail from "./product-card-detail";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="p-1">
-      <Card className="h-full overflow-hidden">
-        <CardContent className="aspect-1 p-0 cursor-none">
-          <ImageGalleryIndex product={product} />
-        </CardContent>
-        <CardFooter className="pt-2">
-          <ProductCardDetail product={product} />
-        </CardFooter>
-      </Card>
-    </div>
+    <Card className="overflow-hidden">
+      <CardContent className="aspect-1 p-0">
+        <ImageGalleryIndex product={product} />
+      </CardContent>
+      <CardFooter>
+        <ProductCardDetail product={product} />
+      </CardFooter>
+    </Card>
   );
 }
 

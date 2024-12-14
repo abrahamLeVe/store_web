@@ -20,36 +20,34 @@ export function CarouselBanner({ data }: Banners) {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full max-w-screen-2xl"
+      className="w-full max-w-screen-2xl lg:p-2"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
         {data.map((banner) => (
           <CarouselItem key={banner.documentId}>
-            <div className="lg:p-1">
-              <Card className="overflow-hidden">
-                <CardContent className="w-full h-full p-0 lg:p-6 ">
-                  {banner.image.provider_metadata.resource_type === "video" ? (
-                    <video
-                      src={banner.image.url}
-                      autoPlay
-                      loop
-                      muted
-                      controls
-                      className="w-full object-cover aspect-[16/5]"
-                    />
-                  ) : (
-                    <img
-                      src={banner.image.url}
-                      alt={banner.title}
-                      className="w-full object-cover aspect-[16/5]"
-                      loading="lazy"
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="overflow-hidden">
+              <CardContent className="w-full h-full p-0 lg:p-6 ">
+                {banner.image.provider_metadata.resource_type === "video" ? (
+                  <video
+                    src={banner.image.url}
+                    autoPlay
+                    loop
+                    muted
+                    controls
+                    className="w-full object-cover aspect-[16/5]"
+                  />
+                ) : (
+                  <img
+                    src={banner.image.url}
+                    alt={banner.title}
+                    className="w-full object-cover aspect-[16/5]"
+                    loading="lazy"
+                  />
+                )}
+              </CardContent>
+            </Card>
           </CarouselItem>
         ))}
       </CarouselContent>

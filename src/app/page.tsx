@@ -1,6 +1,7 @@
 import { CarouselBanner } from "@/components/carousel/carousel-banner";
 import { CarouselCategory } from "@/components/carousel/carousel-category";
 import { CarouselProduct } from "@/components/carousel/carousel-product";
+import { Cart } from "@/components/cart/cart";
 import { ModeToggle } from "@/components/mode-toggle";
 import MobileMenu from "@/components/nav-bar/mobile-menu";
 import { NavMenu } from "@/components/nav-bar/nav-menu";

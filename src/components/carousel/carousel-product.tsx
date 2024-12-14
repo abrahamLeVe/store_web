@@ -19,28 +19,26 @@ export function CarouselProduct({ data }: Products) {
   );
 
   return (
-    <div className="mx-auto w-full max-w-screen-2xl">
-      <Carousel
-        plugins={[plugin.current]}
-        className="w-full max-w-screen-2xl"
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
-      >
-        <CarouselContent>
-          {data.map((product) => {
-            return (
-              <CarouselItem
-                key={product.documentId}
-                className="xs:basis-1/2 md:basis-1/3 lg:basis-1/4"
-              >
-                <ProductCard product={product} />
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-        <CarouselPrevious className="left-2" />
-        <CarouselNext className="right-2" />
-      </Carousel>
-    </div>
+    <Carousel
+      plugins={[plugin.current]}
+      className="w-full max-w-screen-2xl px-1"
+      onMouseEnter={plugin.current.stop}
+      onMouseLeave={plugin.current.reset}
+    >
+      <CarouselContent>
+        {data.map((product) => {
+          return (
+            <CarouselItem
+              key={product.documentId}
+              className="xs:basis-1/2 md:basis-1/3 lg:basis-1/4"
+            >
+              <ProductCard product={product} />
+            </CarouselItem>
+          );
+        })}
+      </CarouselContent>
+      <CarouselPrevious className="left-2" />
+      <CarouselNext className="right-2" />
+    </Carousel>
   );
 }

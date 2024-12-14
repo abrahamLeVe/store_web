@@ -1,4 +1,4 @@
-import { fetchDataFromApi } from "@/lib/api";
+import { fetchDataFromApi } from "@/libs/api";
 import { Categories } from "@/models/category.model";
 
 import qs from "qs";
