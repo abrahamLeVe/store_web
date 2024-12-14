@@ -1,4 +1,4 @@
-import { fetchDataFromApi } from "@/libs/api";
+import { fetchDataFromApi } from "@/lib/api";
 import { Products } from "@/models/product.model";
 
 import qs from "qs";

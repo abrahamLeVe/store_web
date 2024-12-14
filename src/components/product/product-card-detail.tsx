@@ -1,5 +1,5 @@
 "use client";
-import { formatCurrency } from "@/libs/utils";
+import { formatCurrency } from "@/lib/utils";
 import { Product } from "@/models/product.model";
 import { useCartStore } from "@/providers/cart.storage.provider";
 import { ShoppingCart } from "lucide-react";

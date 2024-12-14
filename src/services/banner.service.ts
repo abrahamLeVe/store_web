@@ -1,4 +1,4 @@
-import { fetchDataFromApi } from "@/libs/api";
+import { fetchDataFromApi } from "@/lib/api";
 import { Banners } from "@/models/banner.model";
 import qs from "qs";
 
