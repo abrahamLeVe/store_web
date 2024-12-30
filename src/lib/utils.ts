@@ -15,3 +15,8 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat("es-PE", {
 export function formatCurrency(number: number | bigint) {
   return CURRENCY_FORMATTER.format(number);
 }
+
+//truncate text
+export function truncate(str: string, length: number) {
+  return str.length > length ? `${str.substring(0, length)}...` : str;
+}

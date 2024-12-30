@@ -28,7 +28,7 @@ export function CarouselBanner({ data }: Banners) {
         {data.map((banner) => (
           <CarouselItem key={banner.documentId}>
             <Card className="overflow-hidden">
-              <CardContent className="w-full h-full p-0 lg:p-6 ">
+              <CardContent className="w-full p-0 lg:p-6 ">
                 {banner.image.provider_metadata.resource_type === "video" ? (
                   <video
                     src={banner.image.url}
@@ -36,13 +36,13 @@ export function CarouselBanner({ data }: Banners) {
                     loop
                     muted
                     controls
-                    className="w-full object-cover aspect-[16/5]"
+                    className="w-full object-cover aspect-square md:aspect-[16/5]"
                   />
                 ) : (
                   <img
                     src={banner.image.url}
                     alt={banner.title}
-                    className="w-full object-cover aspect-[16/5]"
+                    className="w-full object-cover aspect-square md:aspect-[16/5]"
                     loading="lazy"
                   />
                 )}

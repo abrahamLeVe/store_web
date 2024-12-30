@@ -3,48 +3,71 @@ export interface Products {
   meta?: Meta;
 }
 
+interface Meta {
+  pagination: Pagination;
+}
+
+interface Pagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
 export interface Product {
   id: number;
   documentId: string;
   title: string;
   description: string;
   slug: string;
-  price: number;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date;
-  thumbnail: Thumbnail | null;
-  image: Thumbnail[] | null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  prices: Price[];
+  image: Image[] | null;
 }
 
-export interface Thumbnail {
+interface Image {
   id: number;
   documentId: string;
   name: string;
   alternativeText: null;
   caption: null;
-  width: number | null;
-  height: number | null;
-  formats: Formats | null;
+  width: number;
+  height: number;
+  formats: Formats;
   hash: string;
   ext: string;
   mime: string;
   size: number;
   url: string;
-  previewUrl: null | string;
+  previewUrl: null;
   provider: string;
-  provider_metadata: ProviderMetadata;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date;
+  provider_metadata: Providermetadata;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  related: Related[];
 }
 
-export interface Formats {
+interface Related {
+  __type: string;
+  id: number;
+  documentId: string;
+  title: string;
+  description: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+interface Formats {
   small: Small;
   thumbnail: Small;
 }
 
-export interface Small {
+interface Small {
   ext: string;
   url: string;
   hash: string;
@@ -55,26 +78,42 @@ export interface Small {
   width: number;
   height: number;
   sizeInBytes: number;
-  provider_metadata: ProviderMetadata;
+  provider_metadata: Providermetadata;
 }
 
-export interface ProviderMetadata {
+interface Providermetadata {
   public_id: string;
-  resource_type: ResourceType;
+  resource_type: string;
 }
 
-export enum ResourceType {
-  Image = "image",
-  Video = "video",
+export interface Price {
+  id: number;
+  documentId: string;
+  value: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  producto: Producto;
+  colors: Color[];
 }
 
-export interface Meta {
-  pagination: Pagination;
+export interface Color {
+  id: number;
+  documentId: string;
+  title: string;
+  hexadecimal: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
 }
 
-export interface Pagination {
-  page: number;
-  pageSize: number;
-  pageCount: number;
-  total: number;
+interface Producto {
+  id: number;
+  documentId: string;
+  title: string;
+  description: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
 }

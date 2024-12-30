@@ -8,8 +8,8 @@ import ProductCardDetail from "./product-card-detail";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="aspect-1 p-0">
+    <Card className="overflow-hidden h-full">
+      <CardContent className="p-0">
         <ImageGalleryIndex product={product} />
       </CardContent>
       <CardFooter>

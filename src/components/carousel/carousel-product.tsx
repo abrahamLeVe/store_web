@@ -27,10 +27,11 @@ export function CarouselProduct({ data }: Products) {
     >
       <CarouselContent>
         {data.map((product) => {
+          if (product.prices.length <= 0) return;
           return (
             <CarouselItem
               key={product.documentId}
-              className="xs:basis-1/2 md:basis-1/3 lg:basis-1/4"
+              className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
             >
               <ProductCard product={product} />
             </CarouselItem>

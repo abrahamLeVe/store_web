@@ -1,5 +1,7 @@
 "use client";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartStoreProvider } from "./cart.storage.provider";
+import { Toaster } from "@/components/ui/toaster";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -7,12 +9,9 @@ interface ProvidersProps {
 
 export default function Providers({ children }: ProvidersProps) {
   return (
-    // <SessionProvider>
-    //   <Toaster />
     <CartStoreProvider>
-      {/* <MessagesProvider>{children}</MessagesProvider> */}
-      {children}
+      <Toaster />
+      <TooltipProvider>{children}</TooltipProvider>
     </CartStoreProvider>
-    // </SessionProvider>
   );
 }
