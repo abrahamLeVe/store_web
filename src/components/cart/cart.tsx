@@ -14,7 +14,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/providers/cart.storage.provider";
 import { Label } from "@radix-ui/react-label";
 import { TrashIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { QuantityInput } from "../product/quantity-input";
 import { Button } from "../ui/button";
 import {
@@ -26,6 +26,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { ProductDetailButton } from "../product/product-detail-button";
 
 export default function Cart() {
   const { items, updateItemQuantity, removeItem, clearCart } = useCartStore(
@@ -71,7 +72,7 @@ export default function Cart() {
     colors?: Color[];
   }
 
-  const calculateSubtotal = (price: Price): number => {
+  const calculateSubtotal = useCallback((price: Price): number => {
     if (price.colors && price.colors.length > 0) {
       return price.colors.reduce(
         (subtotal, color) => subtotal + color.quantity * price.value,
@@ -79,7 +80,7 @@ export default function Cart() {
       );
     }
     return price.quantity * price.value;
-  };
+  }, []);
 
   const total = useMemo(
     () =>
@@ -99,12 +100,12 @@ export default function Cart() {
   const igv = total * 0.18; // Ejemplo de IGV (18%)
 
   return (
-    <div className="p-4">
+    <div className="flex flex-col w-full gap-4">
       <h2 className="mb-4">Carrito de Compras</h2>
       {items.length === 0 ? (
         <p className="text-center">El carrito está vacío.</p>
       ) : (
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col w-full lg:flex-row gap-4">
           <div className="flex-1 flex flex-col gap-4">
             <Table>
               <TableCaption>Lista de productos en tu carrito.</TableCaption>
@@ -123,11 +124,19 @@ export default function Cart() {
                     <TableRow key={`${item.id}-${price.priceId}`}>
                       <TableCell>
                         <div className="flex items-center gap-4 min-w-40">
-                          <img
-                            src={item.img}
-                            alt={item.name}
-                            className="w-16 h-16 object-cover rounded-md"
-                          />
+                          <div className="relative group">
+                            <img
+                              src={item.img}
+                              alt={item.name}
+                              className="w-16 h-16 object-cover rounded-md"
+                            />
+                            <div className="absolute inset-0 transition-opacity opacity-50 group-hover:opacity-100">
+                              <ProductDetailButton
+                                slug={item.slug}
+                                title={item.name}
+                              />
+                            </div>
+                          </div>
                           <div>
                             <h3>{item.name}</h3>
                           </div>

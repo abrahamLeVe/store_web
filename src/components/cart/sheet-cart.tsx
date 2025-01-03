@@ -16,7 +16,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/providers/cart.storage.provider";
 import { ShoppingCart, TrashIcon } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { QuantityInput } from "../product/quantity-input";
 import { Badge } from "../ui/badge";
 import {
@@ -28,6 +28,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { ProductDetailButton } from "../product/product-detail-button";
 
 export function SheetCart() {
   const { updateItemQuantity, removeItem, items, updateItemPrices } =
@@ -85,7 +86,7 @@ export function SheetCart() {
     colors?: Color[];
   }
 
-  const calculateSubtotal = (price: Price): number => {
+  const calculateSubtotal = useCallback((price: Price): number => {
     if (price.colors && price.colors.length > 0) {
       return price.colors.reduce(
         (subtotal, color) => subtotal + color.quantity * price.value,
@@ -93,7 +94,7 @@ export function SheetCart() {
       );
     }
     return price.quantity * price.value;
-  };
+  }, []);
 
   const total = useMemo(
     () =>
@@ -116,7 +117,7 @@ export function SheetCart() {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" disabled={currentQuantity === 0}>
-          <ShoppingCart width={20} />
+          <ShoppingCart />
           <Badge>{currentQuantity}</Badge>
         </Button>
       </SheetTrigger>
@@ -128,9 +129,9 @@ export function SheetCart() {
             productos si es necesario.
           </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="h-full max-h-[calc(100vh-400px)] pr-3">
-          {items.length > 0 ? (
-            items.map((item) =>
+        {items.length > 0 ? (
+          <ScrollArea className="h-full max-h-[calc(100vh-400px)] pr-3">
+            {items.map((item) =>
               item.prices.map((price) => (
                 <div
                   key={`${item.id}-${price.priceId}`}
@@ -138,11 +139,19 @@ export function SheetCart() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <img
-                        src={item.img}
-                        alt={item.name}
-                        className="w-16 h-16 object-cover rounded-md"
-                      />
+                      <div className="relative group">
+                        <img
+                          src={item.img}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded-md"
+                        />
+                        <div className="absolute inset-0 transition-opacity opacity-50 group-hover:opacity-100">
+                          <ProductDetailButton
+                            slug={item.slug}
+                            title={item.name}
+                          />
+                        </div>
+                      </div>
                       <div>
                         <h3>{item.name}</h3>
                         <p className="text-sm text-gray-600">
@@ -270,11 +279,13 @@ export function SheetCart() {
                   <Separator className="my-2" />
                 </div>
               ))
-            )
-          ) : (
-            <p className="text-center text-gray-500">Tu carrito está vacío.</p>
-          )}
-        </ScrollArea>
+            )}
+          </ScrollArea>
+        ) : (
+          <p className="py-5 text-center text-gray-500">
+            Tu carrito está vacío.
+          </p>
+        )}
         <SheetFooter>
           {items.length > 0 ? (
             <Card className="mt-4 w-full">
@@ -317,7 +328,7 @@ export function SheetCart() {
             </Card>
           ) : (
             <SheetClose asChild>
-              <Button className="relative" type="button">
+              <Button className="relative m-auto" type="button">
                 <Link className="absolute inset-0" href={"/products"} />
                 Ver ofertas
               </Button>

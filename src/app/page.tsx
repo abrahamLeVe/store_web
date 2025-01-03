@@ -1,10 +1,7 @@
 import { CarouselBanner } from "@/components/carousel/carousel-banner";
 import { CarouselCategory } from "@/components/carousel/carousel-category";
 import { CarouselProduct } from "@/components/carousel/carousel-product";
-import { SheetCart } from "@/components/cart/sheet-cart";
-import { ModeToggle } from "@/components/mode-toggle";
-import MobileMenu from "@/components/nav-bar/mobile-menu";
-import { NavMenu } from "@/components/nav-bar/nav-menu";
+import HeaderMain from "@/components/nav-bar/header-main";
 import { Separator } from "@/components/ui/separator";
 import { getBanners } from "@/services/banner.service";
 import { getCategories } from "@/services/category.service";
@@ -16,32 +13,9 @@ export default async function Home() {
   const { data: categories } = await getCategories();
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen font-[family-name:var(--font-nunito-sans)]">
-      <header className="w-full backdrop-blur-md sticky top-0 z-10 shadow-sm">
-        <nav className="flex flex-row items-center justify-between h-24 max-w-screen-2xl m-auto gap-1 px-4">
-          <div className="flex gap-4">
-            <div className="aspect-square max-w-20">
-              <img
-                src="/logo.webp"
-                alt="Store Web"
-                className="w-full object-cover rounded-sm"
-                loading="eager"
-              />
-            </div>
-            <div className="hidden lg:flex">
-              <NavMenu />
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <ModeToggle />
-            <SheetCart />
-            <div className="flex lg:hidden">
-              <MobileMenu />
-            </div>
-          </div>
-        </nav>
-      </header>
-      <main className="flex flex-col gap-8 max-w-screen-2xl m-auto items-center w-full">
+    <div className="flex flex-col items-center min-h-screen font-[family-name:var(--font-nunito-sans)]">
+      <HeaderMain />
+      <main className="flex flex-col gap-5 max-w-screen-2xl items-center w-full p-1 md:p-2">
         <CarouselBanner data={banners} />
         <Separator className="my-4" />
         <h2>Recien llegados</h2>

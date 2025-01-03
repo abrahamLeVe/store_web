@@ -2,10 +2,16 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/utils";
-import { Product } from "@/models/product.model";
+import { Product } from "@/models/product/products.model";
 import { useCartStore } from "@/providers/cart.storage.provider";
 import { TrashIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import {
@@ -122,6 +128,7 @@ export default function ProductCardDetail({ product }: { product: Product }) {
 
       if (selectedColors.length > 0 && colorsWithQuantities.length === 0) {
         toast({
+          variant: "destructive",
           description:
             "Debe seleccionar al menos un color con cantidad mayor a 0.",
         });
@@ -130,6 +137,7 @@ export default function ProductCardDetail({ product }: { product: Product }) {
 
       if (selectedColors.length === 0 && productQuantity <= 0) {
         toast({
+          variant: "destructive",
           description: "La cantidad del producto debe ser mayor a 0.",
         });
         return;
@@ -153,8 +161,9 @@ export default function ProductCardDetail({ product }: { product: Product }) {
   };
 
   return (
-    <div className="flex flex-col gap-3 pt-2 w-full">
+    <div className="flex flex-col gap-3 pt-4 w-full">
       <h2>{product.title}</h2>
+
       <Select
         value={selectedPriceId}
         onValueChange={(value) => setSelectedPriceId(value)}
@@ -175,48 +184,65 @@ export default function ProductCardDetail({ product }: { product: Product }) {
       </Select>
 
       {selectedColors.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          {selectedColors.map((color) => (
-            <div key={color.documentId} className="flex items-center gap-2">
-              <Label
-                className="flex items-center gap-2 max-w-24 w-full"
-                htmlFor={color.documentId + product.title}
-              >
-                <div
-                  className="w-6 h-6 border rounded-full"
-                  style={{ backgroundColor: color.hexadecimal }}
-                  title={color.title}
-                ></div>
-                {color.title}
-              </Label>
-
-              <QuantityInput
-                id={color.documentId + product.title}
-                value={colorQuantities[color.documentId] || 0}
-                onChange={(value) =>
-                  handleColorQuantityChange(color.documentId, value)
-                }
-              />
-              {colorQuantities[color.documentId] > 0 && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      onClick={() => handleRemoveColor(color.documentId)}
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="justify-start">
+              <span>Colores</span>
+              <div className="flex gap-2 ml-2">
+                {selectedColors.map((color) => (
+                  <div
+                    key={color.documentId}
+                    className="w-4 h-4 border rounded-full"
+                    style={{ backgroundColor: color.hexadecimal }}
+                    title={color.title}
+                  ></div>
+                ))}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2">
+                {selectedColors.map((color) => (
+                  <div
+                    key={color.documentId}
+                    className="flex items-center gap-2"
+                  >
+                    <Label
+                      className="flex items-center gap-2 max-w-24 w-full"
+                      htmlFor={color.documentId + product.title}
                     >
-                      <TrashIcon className="w-5 h-5 text-red-500" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Retirar</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          ))}
-        </div>
+                      <div
+                        className="w-6 h-6 border rounded-full"
+                        style={{ backgroundColor: color.hexadecimal }}
+                        title={color.title}
+                      ></div>
+                      {color.title}
+                    </Label>
+
+                    <QuantityInput
+                      id={color.documentId + product.title}
+                      value={colorQuantities[color.documentId] || 0}
+                      onChange={(value) =>
+                        handleColorQuantityChange(color.documentId, value)
+                      }
+                    />
+                    {colorQuantities[color.documentId] > 0 && (
+                      <CustomTooltip tooltipText="Retirar del carrito">
+                        <Button
+                          variant={"outline"}
+                          onClick={() => handleRemoveColor(color.documentId)}
+                        >
+                          <TrashIcon className="w-5 h-5 text-red-500" />
+                        </Button>
+                      </CustomTooltip>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 py-2">
           <Label htmlFor={`productQuantity-${product.documentId}`}>
             Cantidad:
           </Label>
@@ -227,21 +253,32 @@ export default function ProductCardDetail({ product }: { product: Product }) {
             onChange={handleProductQuantityChange}
           />
           {productQuantity > 0 && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant={"outline"} onClick={handleRemoveProduct}>
-                  <TrashIcon className="w-5 h-5 text-red-500" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Retirar</p>
-              </TooltipContent>
-            </Tooltip>
+            <CustomTooltip tooltipText="Retirar del carrito">
+              <Button variant={"outline"} onClick={handleRemoveProduct}>
+                <TrashIcon className="w-5 h-5 text-red-500" />
+              </Button>
+            </CustomTooltip>
           )}
         </div>
       )}
 
       <Button onClick={handleAddToCart}>Agregar al carrito</Button>
     </div>
+  );
+}
+
+interface CustomTooltipProps {
+  tooltipText: string;
+  children: ReactNode;
+}
+
+export function CustomTooltip({ tooltipText, children }: CustomTooltipProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent>
+        <p>{tooltipText}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
