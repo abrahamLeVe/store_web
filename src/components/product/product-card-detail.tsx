@@ -5,7 +5,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Product } from "@/models/product/products.model";
 import { useCartStore } from "@/providers/cart.storage.provider";
 import { TrashIcon } from "lucide-react";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -23,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+
+import { CustomTooltip } from "@/hooks/use-tooltip";
 import { QuantityInput } from "./quantity-input";
 
 export default function ProductCardDetail({ product }: { product: Product }) {
@@ -186,9 +187,9 @@ export default function ProductCardDetail({ product }: { product: Product }) {
       {selectedColors.length > 0 ? (
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
-            <AccordionTrigger className="justify-start">
+            <AccordionTrigger>
               <span>Colores</span>
-              <div className="flex gap-2 ml-2">
+              <div className="flex flex-1 gap-2 ml-5">
                 {selectedColors.map((color) => (
                   <div
                     key={color.documentId}
@@ -230,8 +231,9 @@ export default function ProductCardDetail({ product }: { product: Product }) {
                         <Button
                           variant={"outline"}
                           onClick={() => handleRemoveColor(color.documentId)}
+                          size="icon"
                         >
-                          <TrashIcon className="w-5 h-5 text-red-500" />
+                          <TrashIcon className="text-red-500" />
                         </Button>
                       </CustomTooltip>
                     )}
@@ -254,8 +256,12 @@ export default function ProductCardDetail({ product }: { product: Product }) {
           />
           {productQuantity > 0 && (
             <CustomTooltip tooltipText="Retirar del carrito">
-              <Button variant={"outline"} onClick={handleRemoveProduct}>
-                <TrashIcon className="w-5 h-5 text-red-500" />
+              <Button
+                variant={"outline"}
+                onClick={handleRemoveProduct}
+                size="icon"
+              >
+                <TrashIcon className="text-red-500" />
               </Button>
             </CustomTooltip>
           )}
@@ -264,21 +270,5 @@ export default function ProductCardDetail({ product }: { product: Product }) {
 
       <Button onClick={handleAddToCart}>Agregar al carrito</Button>
     </div>
-  );
-}
-
-interface CustomTooltipProps {
-  tooltipText: string;
-  children: ReactNode;
-}
-
-export function CustomTooltip({ tooltipText, children }: CustomTooltipProps) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent>
-        <p>{tooltipText}</p>
-      </TooltipContent>
-    </Tooltip>
   );
 }

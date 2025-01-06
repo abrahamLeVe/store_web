@@ -27,6 +27,7 @@ import {
 } from "../ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { ProductDetailButton } from "../product/product-detail-button";
+import { CustomTooltip } from "@/hooks/use-tooltip";
 
 export default function Cart() {
   const { items, updateItemQuantity, removeItem, clearCart } = useCartStore(
@@ -204,41 +205,33 @@ export default function Cart() {
                         {price.colors && price.colors.length > 0 ? (
                           price.colors.map((color) => (
                             <div key={color.colorId} className="py-1">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant={"outline"}
-                                    onClick={() =>
-                                      handleRemoveColor(
-                                        item.id,
-                                        price.priceId,
-                                        color.colorId
-                                      )
-                                    }
-                                  >
-                                    <TrashIcon className="w-5 h-5 text-red-500" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Retirar</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <CustomTooltip tooltipText="Retirar del carrito">
+                                <Button
+                                  variant={"outline"}
+                                  onClick={() =>
+                                    handleRemoveColor(
+                                      item.id,
+                                      price.priceId,
+                                      color.colorId
+                                    )
+                                  }
+                                  size="icon"
+                                >
+                                  <TrashIcon className="text-red-500" />
+                                </Button>
+                              </CustomTooltip>
                             </div>
                           ))
                         ) : (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant={"outline"}
-                                onClick={() => handleRemoveItem(item.id)}
-                              >
-                                <TrashIcon className="w-5 h-5 text-red-500" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Retirar</p>
-                            </TooltipContent>
-                          </Tooltip>
+                          <CustomTooltip tooltipText="Retirar del carrito">
+                            <Button
+                              variant={"outline"}
+                              onClick={() => handleRemoveItem(item.id)}
+                              size="icon"
+                            >
+                              <TrashIcon className="text-red-500" />
+                            </Button>
+                          </CustomTooltip>
                         )}
                       </TableCell>
                       <TableCell>

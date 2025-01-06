@@ -13,7 +13,7 @@ import {
 import { Categories } from "@/models/category.model";
 import CategoryCard from "../category/category-card";
 
-export function CarouselCategory({ data }: Categories) {
+export function CarouselCategory({ data: categories }: Categories) {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
@@ -26,7 +26,7 @@ export function CarouselCategory({ data }: Categories) {
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
-        {data.map((category) => {
+        {categories.map((category) => {
           return (
             <CarouselItem
               key={category.documentId}

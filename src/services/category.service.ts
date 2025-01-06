@@ -7,7 +7,7 @@ export const getCategories = async (): Promise<Categories> => {
   const queryString = qs.stringify(
     {
       populate: "*",
-      sort: ["createdAt:desc"],
+      sort: ["title:asc"],
     },
     { encodeValuesOnly: true }
   );

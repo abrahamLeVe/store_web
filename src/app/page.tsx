@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col items-center min-h-screen font-[family-name:var(--font-nunito-sans)]">
-      <HeaderMain />
+      <HeaderMain data={{ data: categories }} />
       <main className="flex flex-col gap-5 max-w-screen-2xl items-center w-full p-1 md:p-2">
         <CarouselBanner data={banners} />
         <Separator className="my-4" />

@@ -16,10 +16,10 @@ import ProductCardDetail from "./product-card-detail";
 export default function ProductDetails({ product }: { product: Product }) {
   return (
     <div className="flex flex-col h-full w-full lg:flex-row gap-10">
-      <div className="h-full lg:w-[50%] lg:sticky top-28">
+      <div className="h-full lg:w-[50%] lg:sticky top-28 lg:p-3">
         <ProductCardImage product={product} />
       </div>
-      <div className="flex flex-col lg:w-[50%] gap-4">
+      <div className="flex flex-col lg:w-[50%] gap-4 lg:p-3">
         <ProductCardDetail product={product} />
         <Card>
           <CardHeader>
