@@ -7,7 +7,7 @@ import { getBanners } from "@/services/banner.service";
 import { getCategories } from "@/services/category.service";
 import { getProducts } from "@/services/product.service";
 
-export const revalidate = 360;
+export const revalidate = 60;
 
 export default async function Home() {
   const { data: banners } = await getBanners();
