@@ -12,11 +12,11 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { CustomTooltip } from "@/hooks/use-tooltip";
 import { cn } from "@/lib/utils";
 import { Categories } from "@/models/category.model";
-import { Card } from "../ui/card";
+import CategoryCard from "../category/category-card";
 import { ScrollArea } from "../ui/scroll-area";
-import { CustomTooltip } from "@/hooks/use-tooltip";
 
 export function NavMenu({ data: categories }: Categories) {
   return (
@@ -44,29 +44,15 @@ export function NavMenu({ data: categories }: Categories) {
             <ScrollArea>
               <ul className="grid grid-cols-4 gap-3 p-4 w-[900px] h-full max-h-[calc(100vh-100px)]">
                 {categories.map((category) => (
-                  <ListItem
-                    key={category.title}
-                    title={category.title}
-                    href={`/category/${category.title}`}
-                  >
-                    {category.image?.provider_metadata.resource_type ===
-                    "video" ? (
-                      <video
-                        src={category.image?.url}
-                        loop
-                        muted
-                        autoPlay
-                        className="w-full object-cover aspect-square"
+                  <li key={category.documentId}>
+                    <NavigationMenuLink asChild>
+                      <CategoryCard
+                        title={category.title}
+                        href={`/category/${category.slug}`}
+                        category={category}
                       />
-                    ) : (
-                      <img
-                        src={category.image?.url || "/no_img.webp"}
-                        alt={category.title}
-                        className="w-full object-cover aspect-square"
-                        loading="lazy"
-                      />
-                    )}
-                  </ListItem>
+                    </NavigationMenuLink>
+                  </li>
                 ))}
               </ul>
             </ScrollArea>
@@ -101,7 +87,7 @@ const ListItem = React.forwardRef<
             {...props}
           >
             <p className="text-sm font-medium leading-none">{title}</p>
-            <Card className="line-clamp-2">{children}</Card>
+            <>{children}</>
           </a>
         </NavigationMenuLink>
       </li>

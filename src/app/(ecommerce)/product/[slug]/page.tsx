@@ -29,7 +29,7 @@ export default async function ProductPage({
 
   return (
     <>
-      {product[0].prices?.length > 0 ? (
+      {product[0].models?.length > 0 ? (
         <>
           <Breadcrumbs
             segments={[

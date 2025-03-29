@@ -1,14 +1,27 @@
 import { fetchDataFromApi } from "@/lib/api";
-import { Product } from "@/models/product/product.model";
-import { Products } from "@/models/product/products.model";
+import { Products } from "@/models/products.model";
 import qs from "qs";
 
 export const getProducts = async (): Promise<Products> => {
   const queryString = qs.stringify(
     {
       populate: {
-        prices: { populate: "*" },
-        image: { populate: "*" },
+        models: {
+          populate: {
+            prices: {
+              populate: "*",
+            },
+            image: {
+              fields: ["*"],
+            },
+          },
+        },
+        category: {
+          fields: ["*"],
+        },
+        brand: {
+          fields: ["*"],
+        },
       },
       sort: ["createdAt:desc"],
     },
@@ -29,8 +42,22 @@ export const getProduct = async (slug: string): Promise<Products> => {
   const queryString = qs.stringify(
     {
       populate: {
-        prices: { populate: "*" },
-        image: { populate: "*" },
+        models: {
+          populate: {
+            prices: {
+              populate: "*",
+            },
+            image: {
+              fields: ["*"],
+            },
+          },
+        },
+        category: {
+          fields: ["*"],
+        },
+        brand: {
+          fields: ["*"],
+        },
       },
       filters: filter,
     },

@@ -13,6 +13,7 @@ export interface Category {
   publishedAt: Date;
   image?: Image;
   sub_categories?: Category[];
+  slug: string;
 }
 
 export interface Image {

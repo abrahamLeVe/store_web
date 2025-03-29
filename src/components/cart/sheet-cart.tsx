@@ -12,11 +12,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { CustomTooltip } from "@/hooks/use-tooltip";
 import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/providers/cart.storage.provider";
 import { ShoppingCart, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
+import { ProductDetailButton } from "../product/product-detail-button";
 import { QuantityInput } from "../product/quantity-input";
 import { Badge } from "../ui/badge";
 import {
@@ -27,9 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { ProductDetailButton } from "../product/product-detail-button";
-import { CustomTooltip } from "@/hooks/use-tooltip";
+import { Price } from "@/models/cart.model";
 
 export function SheetCart() {
   const { updateItemQuantity, removeItem, items, updateItemPrices } =
@@ -39,53 +39,69 @@ export function SheetCart() {
 
   const handleDecrease = (
     id: string,
+    modelId: string,
     priceId: string,
-    colorId: string | undefined,
+    colorKey: string | undefined,
     quantity: number
   ) => {
     if (quantity > 1) {
-      updateItemQuantity(id, priceId, colorId, quantity - 1);
+      updateItemQuantity(id, modelId, priceId, colorKey, quantity - 1);
     } else if (quantity === 1) {
-      updateItemQuantity(id, priceId, colorId, 0);
+      updateItemQuantity(id, modelId, priceId, colorKey, 0);
     }
   };
 
   const handleIncrease = (
     id: string,
+    modelId: string,
     priceId: string,
-    colorId: string | undefined,
+    colorKey: string | undefined,
     quantity: number
   ) => {
-    updateItemQuantity(id, priceId, colorId, quantity + 1);
+    updateItemQuantity(id, modelId, priceId, colorKey, quantity + 1);
   };
 
-  const handleRemovePrice = (itemId: string, priceId: string) => {
+  const handleRemovePrice = (
+    itemId: string,
+    modelId: string,
+    priceId: string
+  ) => {
     const item = items.find((item) => item.id === itemId);
     if (item) {
-      const updatedPrices = item.prices.filter(
-        (price) => price.priceId !== priceId
-      );
-      if (updatedPrices.length > 0) {
-        updateItemPrices(itemId, updatedPrices);
-      } else {
-        removeItem(itemId);
+      const model = item.models.find((model) => model.modelId === modelId);
+      if (model) {
+        // Filtrar los precios para eliminar el precio específico
+        const updatedPrices = model.prices.filter(
+          (price) => price.priceId !== priceId
+        );
+
+        if (updatedPrices.length > 0) {
+          // Si quedan precios, actualizamos el modelo con los precios restantes
+          const updatedModels = item.models.map((m) =>
+            m.modelId === modelId ? { ...m, prices: updatedPrices } : m
+          );
+          updateItemPrices(itemId, modelId, updatedPrices);
+        } else {
+          // Si no quedan precios, eliminamos el modelo
+          const updatedModels = item.models.filter(
+            (m) => m.modelId !== modelId
+          );
+
+          if (updatedModels.length > 0) {
+            // Si quedan modelos, actualizamos el producto con los modelos restantes
+            const updatedItems = items.map((i) =>
+              i.id === itemId ? { ...i, models: updatedModels } : i
+            );
+            // Actualiza el estado global con los productos restantes
+            updateItemPrices(itemId, modelId, []);
+          } else {
+            // Si no quedan modelos, eliminamos el producto completo
+            removeItem(itemId);
+          }
+        }
       }
     }
   };
-
-  interface Color {
-    colorId: string;
-    colorHex: string;
-    colorTitle: string;
-    quantity: number;
-  }
-
-  interface Price {
-    priceId: string;
-    value: number;
-    quantity: number;
-    colors?: Color[];
-  }
 
   const calculateSubtotal = useCallback((price: Price): number => {
     if (price.colors && price.colors.length > 0) {
@@ -102,8 +118,13 @@ export function SheetCart() {
       items.reduce(
         (total, item) =>
           total +
-          item.prices.reduce(
-            (itemTotal, price) => itemTotal + calculateSubtotal(price),
+          item.models.reduce(
+            (modelTotal, model) =>
+              modelTotal +
+              model.prices.reduce(
+                (priceTotal, price) => priceTotal + calculateSubtotal(price),
+                0
+              ),
             0
           ),
         0
@@ -133,67 +154,123 @@ export function SheetCart() {
           {items.length > 0 ? (
             <>
               {items.map((item) =>
-                item.prices.map((price) => (
-                  <div
-                    key={`${item.id}-${price.priceId}`}
-                    className="flex flex-col gap-2 py-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="relative group">
-                          <img
-                            src={item.img}
-                            alt={item.name}
-                            className="w-16 h-16 object-cover rounded-md"
-                          />
-                          <div className="absolute inset-0 transition-opacity opacity-50 group-hover:opacity-100">
-                            <ProductDetailButton
-                              slug={item.slug}
-                              title={item.name}
+                item.models.map((model) =>
+                  model.prices.map((price) => (
+                    <div
+                      key={`${item.id}-${model.modelId}-${price.priceId}`}
+                      className="flex flex-col gap-2 py-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="relative group">
+                            <img
+                              src={item.img}
+                              alt={item.name}
+                              className="w-16 h-16 object-cover rounded-md"
                             />
+                            <div className="absolute inset-0 transition-opacity opacity-50 group-hover:opacity-100">
+                              <ProductDetailButton
+                                slug={item.slug}
+                                title={item.name}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <h3>{item.name}</h3>
+                            <p className="text-sm text-gray-600">
+                              {model.name}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {formatCurrency(price.value)}
+                            </p>
                           </div>
                         </div>
-                        <div>
-                          <h3>{item.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            {formatCurrency(price.value)}
-                          </p>
-                        </div>
+                        <CustomTooltip tooltipText="Retirar del carrito">
+                          <Button
+                            variant={"outline"}
+                            onClick={() =>
+                              handleRemovePrice(
+                                item.id,
+                                model.modelId,
+                                price.priceId
+                              )
+                            }
+                            size="icon"
+                          >
+                            <TrashIcon className="text-red-500" />
+                          </Button>
+                        </CustomTooltip>
                       </div>
-                      <CustomTooltip tooltipText="Retirar del carrito">
-                        <Button
-                          variant={"outline"}
-                          onClick={() =>
-                            handleRemovePrice(item.id, price.priceId)
-                          }
-                          size="icon"
-                        >
-                          <TrashIcon className="text-red-500" />
-                        </Button>
-                      </CustomTooltip>
-                    </div>
-                    {price.colors && price.colors.length > 0 ? (
-                      price.colors.map((color) => (
-                        <div
-                          key={color.colorId}
-                          className="flex items-center justify-end gap-4"
-                        >
-                          <div className="flex items-center justify-start gap-2 w-full">
-                            <div
-                              className="w-6 h-6 border rounded-full"
-                              style={{ backgroundColor: color.colorHex }}
-                              title={color.colorTitle}
-                            ></div>
-                            <span className="text-sm">{color.colorTitle}</span>
+                      {price.colors && price.colors.length > 0 ? (
+                        price.colors.map((color) => (
+                          <div
+                            key={color.colorKey}
+                            className="flex items-center justify-end gap-4"
+                          >
+                            <div className="flex items-center justify-start gap-2 w-full">
+                              <div
+                                className="w-6 h-6 border rounded-full"
+                                style={{ backgroundColor: color.colorHex }}
+                                title={color.colorTitle}
+                              ></div>
+                              <span className="text-sm">
+                                {color.colorTitle}
+                              </span>
+                            </div>
+                            <QuantityInput
+                              id={`quantity-${item.id}-${model.modelId}-${price.priceId}-${color.colorKey}`}
+                              value={color.quantity}
+                              onChange={(value) =>
+                                updateItemQuantity(
+                                  item.id,
+                                  model.modelId,
+                                  price.priceId,
+                                  color.colorKey,
+                                  value
+                                )
+                              }
+                            />
+                            <Button
+                              variant={"outline"}
+                              onClick={() =>
+                                handleDecrease(
+                                  item.id,
+                                  model.modelId,
+                                  price.priceId,
+                                  color.colorKey,
+                                  color.quantity
+                                )
+                              }
+                            >
+                              -
+                            </Button>
+                            <Button
+                              variant={"outline"}
+                              onClick={() =>
+                                handleIncrease(
+                                  item.id,
+                                  model.modelId,
+                                  price.priceId,
+                                  color.colorKey,
+                                  color.quantity
+                                )
+                              }
+                            >
+                              +
+                            </Button>
                           </div>
+                        ))
+                      ) : (
+                        <div className="flex items-center justify-end gap-4">
                           <QuantityInput
-                            id={`quantity-${item.id}-${price.priceId}-${color.colorId}`}
-                            value={color.quantity}
+                            id={`quantity-${item.id}-${model.modelId}-${price.priceId}-default`}
+                            value={price.quantity}
                             onChange={(value) =>
                               updateItemQuantity(
                                 item.id,
+                                model.modelId,
                                 price.priceId,
-                                color.colorId,
+                                undefined,
                                 value
                               )
                             }
@@ -203,9 +280,10 @@ export function SheetCart() {
                             onClick={() =>
                               handleDecrease(
                                 item.id,
+                                model.modelId,
                                 price.priceId,
-                                color.colorId,
-                                color.quantity
+                                undefined,
+                                price.quantity
                               )
                             }
                           >
@@ -216,66 +294,26 @@ export function SheetCart() {
                             onClick={() =>
                               handleIncrease(
                                 item.id,
+                                model.modelId,
                                 price.priceId,
-                                color.colorId,
-                                color.quantity
+                                undefined,
+                                price.quantity
                               )
                             }
                           >
                             +
                           </Button>
                         </div>
-                      ))
-                    ) : (
-                      <div className="flex items-center justify-end gap-4">
-                        <QuantityInput
-                          id={`quantity-${item.id}-${price.priceId}`}
-                          value={price.quantity}
-                          onChange={(value) =>
-                            updateItemQuantity(
-                              item.id,
-                              price.priceId,
-                              undefined,
-                              value
-                            )
-                          }
-                        />
-                        <Button
-                          variant={"outline"}
-                          onClick={() =>
-                            handleDecrease(
-                              item.id,
-                              price.priceId,
-                              undefined,
-                              price.quantity
-                            )
-                          }
-                        >
-                          -
-                        </Button>
-                        <Button
-                          variant={"outline"}
-                          onClick={() =>
-                            handleIncrease(
-                              item.id,
-                              price.priceId,
-                              undefined,
-                              price.quantity
-                            )
-                          }
-                        >
-                          +
-                        </Button>
+                      )}
+                      <div className="flex justify-end">
+                        <p className="text-sm font-semibold">
+                          Subtotal: {formatCurrency(calculateSubtotal(price))}
+                        </p>
                       </div>
-                    )}
-                    <div className="flex justify-end">
-                      <p className="text-sm font-semibold">
-                        Subtotal: {formatCurrency(calculateSubtotal(price))}
-                      </p>
+                      <Separator className="my-2" />
                     </div>
-                    <Separator className="my-2" />
-                  </div>
-                ))
+                  ))
+                )
               )}
             </>
           ) : (

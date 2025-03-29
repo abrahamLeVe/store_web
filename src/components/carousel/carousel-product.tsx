@@ -10,7 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Products } from "@/models/product/products.model";
+import { Products } from "@/models/products.model";
 import ProductCard from "../product/product-card";
 
 export function CarouselProduct({ data: products }: Products) {
@@ -27,7 +27,8 @@ export function CarouselProduct({ data: products }: Products) {
     >
       <CarouselContent className="-ml-2 md:-ml-4">
         {products.map((product) => {
-          if (product.prices.length <= 0) return;
+          if (product.models.length <= 0) return;
+          if (!product.models[0].prices[0]) return;
           return (
             <CarouselItem
               key={product.documentId}

@@ -32,7 +32,11 @@ export function CarouselCategory({ data: categories }: Categories) {
               key={category.documentId}
               className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
             >
-              <CategoryCard category={category} />
+              <CategoryCard
+                title={category.title}
+                href={`/category/${category.slug}`}
+                category={category}
+              />
             </CarouselItem>
           );
         })}

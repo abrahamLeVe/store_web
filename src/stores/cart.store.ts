@@ -2,21 +2,26 @@ import { persist } from "zustand/middleware";
 import { createStore } from "zustand/vanilla";
 
 export type CartItem = {
-  id: string;
-  prices: {
-    priceId: string;
-    value: number;
-    quantity: number;
-    colors?: {
-      colorId: string;
-      colorTitle: string;
-      colorHex: string;
-      quantity: number;
-    }[];
-  }[];
+  id: string; // Product ID
   name: string;
   img: string;
   slug: string;
+  models: {
+    modelId: string;
+    name: string;
+    prices: {
+      priceId: string;
+      value: number;
+      quantity: number;
+      colors?: {
+        colorId: string;
+        colorKey: string;
+        colorTitle: string;
+        colorHex: string;
+        quantity: number;
+      }[];
+    }[];
+  }[];
 };
 
 export type CartState = {
@@ -29,11 +34,16 @@ export type CartActions = {
   clearCart: () => void;
   updateItemQuantity: (
     id: string,
+    modelId: string,
     priceId: string,
-    colorId?: string,
+    colorKey?: string,
     quantity?: number
   ) => void;
-  updateItemPrices: (itemId: string, prices: CartItem["prices"]) => void;
+  updateItemPrices: (
+    itemId: string,
+    modelId: string,
+    prices: CartItem["models"][0]["prices"]
+  ) => void;
 };
 
 export type CartStore = CartState & CartActions;
@@ -51,70 +61,100 @@ export const createCartStore = () =>
           set((state) => {
             const existingItem = state.items.find((i) => i.id === item.id);
             if (existingItem) {
-              const updatedPrices = existingItem.prices.map((existingPrice) => {
-                const matchingNewPrice = item.prices.find(
-                  (newPrice) => newPrice.priceId === existingPrice.priceId
+              const updatedModels = existingItem.models.map((existingModel) => {
+                const matchingNewModel = item.models.find(
+                  (newModel) => newModel.modelId === existingModel.modelId
                 );
 
-                if (matchingNewPrice) {
-                  if (
-                    !matchingNewPrice.colors ||
-                    matchingNewPrice.colors.length === 0
-                  ) {
-                    return {
-                      ...existingPrice,
-                      quantity: matchingNewPrice.quantity,
-                    };
-                  }
-
-                  const updatedColors =
-                    existingPrice.colors?.map((existingColor) => {
-                      const matchingNewColor = matchingNewPrice.colors?.find(
-                        (newColor) => newColor.colorId === existingColor.colorId
+                if (matchingNewModel) {
+                  const updatedPrices = existingModel.prices.map(
+                    (existingPrice) => {
+                      const matchingNewPrice = matchingNewModel.prices.find(
+                        (newPrice) => newPrice.priceId === existingPrice.priceId
                       );
 
-                      return matchingNewColor
-                        ? {
-                            ...existingColor,
-                            quantity: matchingNewColor.quantity,
-                          }
-                        : existingColor;
-                    }) ?? [];
+                      if (matchingNewPrice) {
+                        if (
+                          !matchingNewPrice.colors ||
+                          matchingNewPrice.colors.length === 0
+                        ) {
+                          return {
+                            ...existingPrice,
+                            quantity: matchingNewPrice.quantity,
+                          };
+                        }
 
-                  matchingNewPrice.colors?.forEach((newColor) => {
+                        const updatedColors =
+                          existingPrice.colors?.map((existingColor) => {
+                            const matchingNewColor =
+                              matchingNewPrice.colors?.find(
+                                (newColor) =>
+                                  newColor.colorKey === existingColor.colorKey
+                              );
+
+                            return matchingNewColor
+                              ? {
+                                  ...existingColor,
+                                  quantity: matchingNewColor.quantity,
+                                }
+                              : existingColor;
+                          }) ?? [];
+
+                        matchingNewPrice.colors?.forEach((newColor) => {
+                          if (
+                            !updatedColors.some(
+                              (existingColor) =>
+                                existingColor.colorKey === newColor.colorKey
+                            )
+                          ) {
+                            updatedColors.push(newColor);
+                          }
+                        });
+
+                        return {
+                          ...existingPrice,
+                          colors: updatedColors,
+                        };
+                      }
+
+                      return existingPrice;
+                    }
+                  );
+
+                  matchingNewModel.prices.forEach((newPrice) => {
                     if (
-                      !updatedColors.some(
-                        (existingColor) =>
-                          existingColor.colorId === newColor.colorId
+                      !existingModel.prices.some(
+                        (existingPrice) =>
+                          existingPrice.priceId === newPrice.priceId
                       )
                     ) {
-                      updatedColors.push(newColor);
+                      updatedPrices.push(newPrice);
                     }
                   });
 
                   return {
-                    ...existingPrice,
-                    colors: updatedColors,
+                    ...existingModel,
+                    prices: updatedPrices,
                   };
                 }
 
-                return existingPrice;
+                return existingModel;
               });
 
-              item.prices.forEach((newPrice) => {
+              item.models.forEach((newModel) => {
                 if (
-                  !existingItem.prices.some(
-                    (existingPrice) =>
-                      existingPrice.priceId === newPrice.priceId
+                  !existingItem.models.some(
+                    (existingModel) =>
+                      existingModel.modelId === newModel.modelId
                   )
                 ) {
-                  updatedPrices.push(newPrice);
+                  updatedModels.push(newModel);
                 }
               });
 
               return {
                 items: state.items.map((i) =>
-                  i.id === item.id ? { ...i, prices: updatedPrices } : i
+                  i.id === item.id ? { ...i, models: updatedModels } : i
                 ),
               };
             }
@@ -127,59 +167,79 @@ export const createCartStore = () =>
             items: state.items.filter((item) => item.id !== id),
           })),
         clearCart: () => set({ items: [] }),
-        updateItemQuantity: (id, priceId, colorId, quantity) =>
+        updateItemQuantity: (id, modelId, priceId, colorKey, quantity) =>
           set((state) => ({
             items: state.items
               .map((item) => {
                 if (item.id === id) {
-                  const updatedPrices = item.prices
-                    .map((price) => {
-                      if (price.priceId === priceId) {
-                        let updatedColors = price.colors?.map((color) => {
-                          if (color.colorId === colorId) {
+                  const updatedModels = item.models.map((model) => {
+                    if (model.modelId === modelId) {
+                      const updatedPrices = model.prices
+                        .map((price) => {
+                          if (price.priceId === priceId) {
+                            let updatedColors = price.colors?.map((color) => {
+                              if (color.colorKey === colorKey) {
+                                return {
+                                  ...color,
+                                  quantity: quantity ?? color.quantity,
+                                };
+                              }
+                              return color;
+                            });
+
+                            // Remove colors with quantity 0
+                            if (updatedColors) {
+                              updatedColors = updatedColors.filter(
+                                (color) => color.quantity > 0
+                              );
+                            }
+
                             return {
-                              ...color,
-                              quantity: quantity ?? color.quantity,
+                              ...price,
+                              quantity: colorKey
+                                ? price.quantity
+                                : quantity ?? price.quantity,
+                              colors: updatedColors ?? price.colors,
                             };
                           }
-                          return color;
-                        });
+                          return price;
+                        })
+                        .filter(
+                          (price) =>
+                            (price.colors?.length ?? 0) > 0 ||
+                            price.quantity > 0
+                        );
 
-                        // Remove colors with quantity 0
-                        if (updatedColors) {
-                          updatedColors = updatedColors.filter(
-                            (color) => color.quantity > 0
-                          );
-                        }
-
-                        return {
-                          ...price,
-                          quantity: colorId
-                            ? price.quantity
-                            : quantity ?? price.quantity,
-                          colors: updatedColors ?? price.colors,
-                        };
-                      }
-                      return price;
-                    })
-                    .filter(
-                      (price) =>
-                        (price.colors?.length ?? 0) > 0 || price.quantity > 0
-                    );
+                      return {
+                        ...model,
+                        prices: updatedPrices,
+                      };
+                    }
+                    return model;
+                  });
 
                   return {
                     ...item,
-                    prices: updatedPrices,
+                    models: updatedModels,
                   };
                 }
                 return item;
               })
-              .filter((item) => item.prices.length > 0),
+              .filter((item) =>
+                item.models.some((model) => model.prices.length > 0)
+              ),
           })),
-        updateItemPrices: (itemId, prices) =>
+        updateItemPrices: (itemId, modelId, prices) =>
           set((state) => ({
             items: state.items.map((item) =>
-              item.id === itemId ? { ...item, prices } : item
+              item.id === itemId
+                ? {
+                    ...item,
+                    models: item.models.map((model) =>
+                      model.modelId === modelId ? { ...model, prices } : model
+                    ),
+                  }
+                : item
             ),
           })),
       }),

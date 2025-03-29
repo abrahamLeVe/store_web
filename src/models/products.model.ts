@@ -23,16 +23,76 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  prices: Price[];
-  image: Image[] | null;
+  models: Model[] | [];
+  category: Category[] | [];
+  brand: Brand | null;
+}
+
+interface Brand {
+  id: number;
+  documentId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  slug: null;
+}
+
+interface Category {
+  id: number;
+  documentId: string;
+  title: string;
+  description: null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  slug: string;
+}
+
+interface Price {
+  id: number;
+  documentId: string;
+  value: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  name: string;
+  colors: Color[];
+  sizes: Size[] | [];
+  model: Model;
+}
+
+interface Size {
+  id: number;
+  documentId: string;
+  width: number | null;
+  height: number;
+  depth: number | null;
+  shoeSize: number | null;
+  unit: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  name: string;
+}
+
+interface Model {
+  id: number;
+  documentId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  prices: Price[] | [];
+  image: Image[];
 }
 
 interface Image {
   id: number;
   documentId: string;
   name: string;
-  alternativeText: null;
-  caption: null;
+  alternativeText: string | null;
+  caption: string | null;
   width: number;
   height: number;
   formats: Formats;
@@ -41,22 +101,9 @@ interface Image {
   mime: string;
   size: number;
   url: string;
-  previewUrl: null;
+  previewUrl: string | null;
   provider: string;
   provider_metadata: Providermetadata;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  related: Related[];
-}
-
-interface Related {
-  __type: string;
-  id: number;
-  documentId: string;
-  title: string;
-  description: string;
-  slug: string;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
@@ -73,7 +120,7 @@ interface Small {
   hash: string;
   mime: string;
   name: string;
-  path: null;
+  path: string | null;
   size: number;
   width: number;
   height: number;
@@ -86,33 +133,20 @@ interface Providermetadata {
   resource_type: string;
 }
 
-export interface Price {
+interface Model {
   id: number;
   documentId: string;
-  value: number;
+  name: string;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  producto: Producto;
-  colors: Color[];
 }
 
-export interface Color {
+interface Color {
   id: number;
   documentId: string;
   title: string;
   hexadecimal: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-}
-
-interface Producto {
-  id: number;
-  documentId: string;
-  title: string;
-  description: string;
-  slug: string;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
