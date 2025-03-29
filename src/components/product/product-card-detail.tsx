@@ -356,7 +356,9 @@ export default function ProductCardDetail({ product }: { product: Product }) {
         </div>
       )}
 
-      <Button onClick={handleAddToCart}>Agregar al carrito</Button>
+      <Button className="w-96" onClick={handleAddToCart}>
+        Agregar al carrito
+      </Button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Breadcrumbs } from "@/components/pager/breadcrumbs";
 import ProductDetails from "@/components/product/product-details";
 import ProductNotFound from "@/components/product/product-not-found";
-import { getProduct, getProducts } from "@/services/product.service";
+import { getProducts } from "@/services/product.service";
 
 export async function generateStaticParams() {
   const products = await getProducts();
@@ -16,7 +16,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const slug = (await params).slug;
-  const { data: product } = await getProduct(slug);
+  const { data: product } = await getProducts(slug);
 
   if (product.length === 0) {
     return (
