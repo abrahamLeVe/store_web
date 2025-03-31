@@ -30,6 +30,12 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Price } from "@/models/cart.model";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 
 export function SheetCart() {
   const { updateItemQuantity, removeItem, items, updateItemPrices } =
@@ -321,55 +327,78 @@ export function SheetCart() {
               Tu carrito está vacío.
             </p>
           )}
-          <SheetFooter className="sticky bottom-5">
-            {items.length > 0 ? (
-              <Card className="backdrop-blur-2xl bg-inherit w-full">
-                <CardHeader>
-                  <CardTitle>Resumen del Pedido</CardTitle>
-                  <CardDescription>Productos en el carrito.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Subtotal:</span>
-                    <span>{formatCurrency(total)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Costo de Envío:</span>
-                    <span>{formatCurrency(shippingCost)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>IGV (18%):</span>
-                    <span>{formatCurrency(igv)}</span>
-                  </div>
-                  <div className="flex justify-between font-bold">
-                    <span>Total:</span>
-                    <span>{formatCurrency(total + shippingCost + igv)}</span>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <SheetClose asChild>
-                    <div className="flex flex-wrap justify-end gap-4 w-full">
-                      <Button className="relative" type="button">
-                        <Link className="absolute inset-0" href={"/cart"} />
-                        Ver carrito
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full sticky bottom-5"
+          >
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="backdrop-blur-2xl w-full border p-4 rounded-md shadow-md flex items-center justify-between">
+                Ver detalles mas del pedido
+              </AccordionTrigger>
+              <AccordionContent>
+                <SheetFooter className="">
+                  {items.length > 0 ? (
+                    <Card className=" w-full">
+                      <CardHeader>
+                        <CardTitle>Resumen del Pedido</CardTitle>
+                        <CardDescription>
+                          Productos en el carrito.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="grid gap-1 text-sm">
+                        <div className="flex justify-between">
+                          <span>Subtotal:</span>
+                          <span>{formatCurrency(total)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Costo de Envío:</span>
+                          <span>{formatCurrency(shippingCost)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>IGV (18%):</span>
+                          <span>{formatCurrency(igv)}</span>
+                        </div>
+                        <div className="flex justify-between font-bold">
+                          <span>Total:</span>
+                          <span>
+                            {formatCurrency(total + shippingCost + igv)}
+                          </span>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <SheetClose asChild>
+                          <div className="flex flex-wrap justify-end gap-4 w-full">
+                            <Button className="relative" type="button">
+                              <Link
+                                className="absolute inset-0"
+                                href={"/cart"}
+                              />
+                              Ver carrito
+                            </Button>
+                            <Button className="relative" type="button">
+                              <Link
+                                className="absolute inset-0"
+                                href={"/payment"}
+                              />
+                              Pagar
+                            </Button>
+                          </div>
+                        </SheetClose>
+                      </CardFooter>
+                    </Card>
+                  ) : (
+                    <SheetClose asChild>
+                      <Button className="relative m-auto" type="button">
+                        <Link className="absolute inset-0" href={"/products"} />
+                        Ver ofertas
                       </Button>
-                      <Button className="relative" type="button">
-                        <Link className="absolute inset-0" href={"/payment"} />
-                        Pagar
-                      </Button>
-                    </div>
-                  </SheetClose>
-                </CardFooter>
-              </Card>
-            ) : (
-              <SheetClose asChild>
-                <Button className="relative m-auto" type="button">
-                  <Link className="absolute inset-0" href={"/products"} />
-                  Ver ofertas
-                </Button>
-              </SheetClose>
-            )}
-          </SheetFooter>
+                    </SheetClose>
+                  )}
+                </SheetFooter>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </ScrollArea>
       </SheetContent>
     </Sheet>

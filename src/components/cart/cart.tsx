@@ -125,7 +125,7 @@ export default function Cart() {
                               <img
                                 src={item.img}
                                 alt={item.name}
-                                className="w-16 h-16 object-cover rounded-md"
+                                className="w-full object-cover rounded-md bg-gray-300"
                               />
                               <div className="absolute inset-0 transition-opacity opacity-50 group-hover:opacity-100">
                                 <ProductDetailButton

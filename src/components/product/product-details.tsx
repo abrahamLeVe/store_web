@@ -20,7 +20,7 @@ export default function ProductDetails({ product }: { product: Product }) {
         <ProductCardImage product={product} />
       </div>
       <div className="flex flex-col lg:w-[50%] gap-4 lg:p-3">
-        <ProductCardDetail product={product} />
+        <ProductCardDetail product={product} isPage />
         <Card>
           <CardHeader>
             <CardTitle>Descripción de {product.title}</CardTitle>

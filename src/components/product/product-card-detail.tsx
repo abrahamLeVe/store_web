@@ -27,7 +27,13 @@ import {
 import { CustomTooltip } from "@/hooks/use-tooltip";
 import { QuantityInput } from "./quantity-input";
 
-export default function ProductCardDetail({ product }: { product: Product }) {
+export default function ProductCardDetail({
+  product,
+  isPage = false,
+}: {
+  product: Product;
+  isPage?: boolean;
+}) {
   const { toast } = useToast();
   const { updateItemQuantity, removeItem, addItem, items } = useCartStore(
     (state) => state
@@ -219,146 +225,165 @@ export default function ProductCardDetail({ product }: { product: Product }) {
   };
 
   return (
-    <div className="flex flex-col gap-3 pt-4 w-full">
+    <div className="pt-4 w-full">
       <h2>{product.title}</h2>
 
-      <Select
-        value={selectedModelId}
-        onValueChange={(value) => setSelectedModelId(value)}
+      <div
+        className={`flex flex-col gap-4 mt-4  items-start ${
+          isPage ? " md:flex-row" : ""
+        }`}
       >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Seleccione Modelo" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Modelos</SelectLabel>
-            {product.models.map((model) => (
-              <SelectItem key={model.documentId} value={model.documentId}>
-                {model.name}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={selectedPriceId}
-        onValueChange={(value) => setSelectedPriceId(value)}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Seleccione Precio" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Precios</SelectLabel>
-            {product.models
-              .find((model) => model.documentId === selectedModelId)
-              ?.prices.map((price) => (
-                <SelectItem key={price.documentId} value={price.documentId}>
-                  {formatCurrency(price.value)}
-                </SelectItem>
-              ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
-      {selectedColors.length > 0 ? (
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>
-              <span>Colores</span>
-              <div className="flex flex-1 gap-2 ml-5">
-                {selectedColors.map((color) => (
-                  <div
-                    key={color.documentId + selectedModelId}
-                    className="w-4 h-4 border rounded-full"
-                    style={{ backgroundColor: color.hexadecimal }}
-                    title={color.title}
-                  ></div>
+        <div
+          className={`flex flex-col gap-2 w-full ${isPage ? " md:w-1/2" : ""}`}
+        >
+          <Select
+            value={selectedModelId}
+            onValueChange={(value) => setSelectedModelId(value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione Modelo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Modelos</SelectLabel>
+                {product.models.map((model) => (
+                  <SelectItem key={model.documentId} value={model.documentId}>
+                    {model.name}
+                  </SelectItem>
                 ))}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col gap-2">
-                {selectedColors.map((color) => (
-                  <div
-                    key={color.documentId + selectedModelId}
-                    className="flex items-center gap-2"
-                  >
-                    <Label
-                      className="flex items-center gap-2 max-w-24 w-full"
-                      htmlFor={color.documentId + selectedModelId}
-                    >
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={selectedPriceId}
+            onValueChange={(value) => setSelectedPriceId(value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione Precio" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Precios</SelectLabel>
+                {product.models
+                  .find((model) => model.documentId === selectedModelId)
+                  ?.prices.map((price) => (
+                    <SelectItem key={price.documentId} value={price.documentId}>
+                      {formatCurrency(price.value)}
+                    </SelectItem>
+                  ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div
+          className={`flex flex-col gap-2 w-full items-end ${
+            isPage ? " md:w-1/2" : ""
+          }`}
+        >
+          {selectedColors.length > 0 ? (
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>
+                  <span>Colores</span>
+                  <div className="flex flex-1 gap-2 ml-5">
+                    {selectedColors.map((color) => (
                       <div
-                        className="w-6 h-6 border rounded-full"
+                        key={color.documentId + selectedModelId}
+                        className="w-4 h-4 border rounded-full"
                         style={{ backgroundColor: color.hexadecimal }}
                         title={color.title}
                       ></div>
-                      {color.title}
-                    </Label>
+                    ))}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex flex-col gap-2">
+                    {selectedColors.map((color) => (
+                      <div
+                        key={color.documentId + selectedModelId}
+                        className="flex items-center gap-2"
+                      >
+                        <Label
+                          className="flex items-center gap-2 max-w-24 w-full"
+                          htmlFor={color.documentId + selectedModelId}
+                        >
+                          <div
+                            className="w-6 h-6 border rounded-full"
+                            style={{ backgroundColor: color.hexadecimal }}
+                            title={color.title}
+                          ></div>
+                          {color.title}
+                        </Label>
 
-                    <QuantityInput
-                      id={color.documentId + selectedModelId}
-                      value={
-                        colorQuantities[color.documentId + selectedModelId] || 0
-                      }
-                      onChange={(value) =>
-                        handleColorQuantityChange(
-                          color.documentId + selectedModelId,
-                          value
-                        )
-                      }
-                    />
-                    {colorQuantities[color.documentId + selectedModelId] >
-                      0 && (
-                      <CustomTooltip tooltipText="Retirar del carrito">
-                        <Button
-                          variant={"outline"}
-                          onClick={() =>
-                            handleRemoveColor(
+                        <QuantityInput
+                          id={color.documentId + selectedModelId}
+                          value={
+                            colorQuantities[
                               color.documentId + selectedModelId
+                            ] || 0
+                          }
+                          onChange={(value) =>
+                            handleColorQuantityChange(
+                              color.documentId + selectedModelId,
+                              value
                             )
                           }
-                          size="icon"
-                        >
-                          <TrashIcon className="text-red-500" />
-                        </Button>
-                      </CustomTooltip>
-                    )}
+                        />
+                        {colorQuantities[color.documentId + selectedModelId] >
+                          0 && (
+                          <CustomTooltip tooltipText="Retirar del carrito">
+                            <Button
+                              variant={"outline"}
+                              onClick={() =>
+                                handleRemoveColor(
+                                  color.documentId + selectedModelId
+                                )
+                              }
+                              size="icon"
+                            >
+                              <TrashIcon className="text-red-500" />
+                            </Button>
+                          </CustomTooltip>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      ) : (
-        <div className="flex items-center gap-2 py-2">
-          <Label htmlFor={`productQuantity-${product.documentId}`}>
-            Cantidad:
-          </Label>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : (
+            <div
+              className={`flex items-center justify-end gap-2 w-full ${
+                isPage ? "md:w-1/2" : ""
+              }`}
+            >
+              <Label htmlFor={`productQuantity-${product.documentId}`}>
+                Cantidad:
+              </Label>
 
-          <QuantityInput
-            id={`productQuantity-${product.documentId}`}
-            value={productQuantity}
-            onChange={handleProductQuantityChange}
-          />
-          {productQuantity > 0 && (
-            <CustomTooltip tooltipText="Retirar del carrito">
-              <Button
-                variant={"outline"}
-                onClick={handleRemoveProduct}
-                size="icon"
-              >
-                <TrashIcon className="text-red-500" />
-              </Button>
-            </CustomTooltip>
+              <QuantityInput
+                id={`productQuantity-${product.documentId}`}
+                value={productQuantity}
+                onChange={handleProductQuantityChange}
+              />
+              {productQuantity > 0 && (
+                <CustomTooltip tooltipText="Retirar del carrito">
+                  <Button
+                    variant={"outline"}
+                    onClick={handleRemoveProduct}
+                    size="icon"
+                  >
+                    <TrashIcon className="text-red-500" />
+                  </Button>
+                </CustomTooltip>
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      <Button className="w-96" onClick={handleAddToCart}>
-        Agregar al carrito
-      </Button>
+          <Button onClick={handleAddToCart}>Agregar al carrito</Button>
+        </div>
+      </div>
     </div>
   );
 }
