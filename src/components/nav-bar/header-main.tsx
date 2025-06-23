@@ -11,7 +11,7 @@ interface HeaderMainProps {
 
 export default function HeaderMain({ isCart = false, data }: HeaderMainProps) {
   return (
-    <header className="w-full backdrop-blur-md sticky top-0 z-10 shadow-sm">
+    <header className="w-full backdrop-blur-md sticky top-0 z-50 shadow-sm">
       <nav className="flex flex-row items-center justify-between h-24 max-w-screen-2xl m-auto gap-1 px-4">
         <div className="flex gap-4">
           <div className="aspect-square max-w-20">

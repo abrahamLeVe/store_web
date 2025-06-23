@@ -20,7 +20,7 @@ export default function ProductNotFound({
       <h1 className="text-3xl font-bold">{title}</h1>
       <p className="text-gray-600">{message}</p>
       <Button variant={"default"}>
-        <Link href="/">Ver otros productos</Link>
+        <Link href="/">Regresar al inicio</Link>
       </Button>
     </div>
   );

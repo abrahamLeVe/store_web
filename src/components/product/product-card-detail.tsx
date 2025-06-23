@@ -225,7 +225,7 @@ export default function ProductCardDetail({
   };
 
   return (
-    <div className="pt-4 w-full">
+    <div className="pt-4 w-full h-full">
       <h2>{product.title}</h2>
 
       <div
@@ -236,6 +236,7 @@ export default function ProductCardDetail({
         <div
           className={`flex flex-col gap-2 w-full ${isPage ? " md:w-1/2" : ""}`}
         >
+          <h3>Modelo:</h3>
           <Select
             value={selectedModelId}
             onValueChange={(value) => setSelectedModelId(value)}
@@ -254,7 +255,7 @@ export default function ProductCardDetail({
               </SelectGroup>
             </SelectContent>
           </Select>
-
+          <h3>Precio:</h3>
           <Select
             value={selectedPriceId}
             onValueChange={(value) => setSelectedPriceId(value)}
@@ -277,9 +278,7 @@ export default function ProductCardDetail({
           </Select>
         </div>
         <div
-          className={`flex flex-col gap-2 w-full items-end ${
-            isPage ? " md:w-1/2" : ""
-          }`}
+          className={`flex flex-col gap-2 w-full ${isPage ? " md:w-1/2" : ""}`}
         >
           {selectedColors.length > 0 ? (
             <Accordion type="single" collapsible className="w-full">
@@ -304,6 +303,22 @@ export default function ProductCardDetail({
                         key={color.documentId + selectedModelId}
                         className="flex items-center gap-2"
                       >
+                        {colorQuantities[color.documentId + selectedModelId] >
+                          0 && (
+                          <CustomTooltip tooltipText="Retirar del carrito">
+                            <Button
+                              variant={"outline"}
+                              onClick={() =>
+                                handleRemoveColor(
+                                  color.documentId + selectedModelId
+                                )
+                              }
+                              size="icon"
+                            >
+                              <TrashIcon className="text-red-500" />
+                            </Button>
+                          </CustomTooltip>
+                        )}
                         <Label
                           className="flex items-center gap-2 max-w-24 w-full"
                           htmlFor={color.documentId + selectedModelId}
@@ -330,22 +345,6 @@ export default function ProductCardDetail({
                             )
                           }
                         />
-                        {colorQuantities[color.documentId + selectedModelId] >
-                          0 && (
-                          <CustomTooltip tooltipText="Retirar del carrito">
-                            <Button
-                              variant={"outline"}
-                              onClick={() =>
-                                handleRemoveColor(
-                                  color.documentId + selectedModelId
-                                )
-                              }
-                              size="icon"
-                            >
-                              <TrashIcon className="text-red-500" />
-                            </Button>
-                          </CustomTooltip>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -354,19 +353,8 @@ export default function ProductCardDetail({
             </Accordion>
           ) : (
             <div
-              className={`flex items-center justify-end gap-2 w-full ${
-                isPage ? "md:w-1/2" : ""
-              }`}
+              className={`flex flex-row items-center justify-end gap-2 w-full`}
             >
-              <Label htmlFor={`productQuantity-${product.documentId}`}>
-                Cantidad:
-              </Label>
-
-              <QuantityInput
-                id={`productQuantity-${product.documentId}`}
-                value={productQuantity}
-                onChange={handleProductQuantityChange}
-              />
               {productQuantity > 0 && (
                 <CustomTooltip tooltipText="Retirar del carrito">
                   <Button
@@ -378,6 +366,15 @@ export default function ProductCardDetail({
                   </Button>
                 </CustomTooltip>
               )}
+              <Label htmlFor={`productQuantity-${product.documentId}`}>
+                Cantidad:
+              </Label>
+
+              <QuantityInput
+                id={`productQuantity-${product.documentId}`}
+                value={productQuantity}
+                onChange={handleProductQuantityChange}
+              />
             </div>
           )}
 
